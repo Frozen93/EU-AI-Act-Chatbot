@@ -34,7 +34,7 @@ if "vectorstore" not in st.session_state:
 retriever = st.session_state.vectorstore.as_retriever(k=4)
 
 # Chat model setup
-chat_model = ChatOpenAI(model="gpt-3.5-turbo-0125")
+chat_model = ChatOpenAI(model="gpt-3.5-turbo-0125", openai_api_key=openai.api_key)
 question_answering_prompt = ChatPromptTemplate.from_messages(
     [
         (
