@@ -8,7 +8,6 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.memory import ChatMessageHistory
-from typing import Dict
 from langchain_core.runnables import RunnablePassthrough
 
 # Function to convert session state messages to the expected format
@@ -32,7 +31,7 @@ if "all_splits" not in st.session_state:
     st.session_state["all_splits"] = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=0).split_documents(st.session_state.data)
 
 if "vectorstore" not in st.session_state:
-    st.session_state["vectorstore"] = Chroma.from_documents(documents=st.session_state.all_splits, embedding=OpenAIEmbeddings())
+    st.session_state["vectorstore"] = Chroma.from_documents(documents=st.session_state.all_splits, embedding=OpenAIEmbeddings(openai_api_key=openai.api_key))
 #vectorstore = Chroma.from_documents(documents=st.session_state.all_splits, embedding=OpenAIEmbeddings())
 retriever = st.session_state.vectorstore.as_retriever(k=4)
 
