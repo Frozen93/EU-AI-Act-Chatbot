@@ -1,7 +1,7 @@
 import streamlit as st
 import openai
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import Chroma
+from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -22,6 +22,7 @@ openai.api_key = st.secrets["openai_key"]
 
 st.title("Chatte per KI mit dem EU AI ACT")
 
+
 if "data" not in st.session_state:
     st.session_state["data"] = PyPDFLoader("aiact.pdf").load()
 
@@ -29,7 +30,7 @@ if "all_splits" not in st.session_state:
     st.session_state["all_splits"] = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=0).split_documents(st.session_state.data)
 
 if "vectorstore" not in st.session_state:
-    st.session_state["vectorstore"] = Chroma.from_documents(documents=st.session_state.all_splits, embedding=OpenAIEmbeddings(openai_api_key=openai.api_key))
+    st.session_state["vectorstore"] = FAISS.from_documents(documents=st.session_state.all_splits, embedding=OpenAIEmbeddings(openai_api_key=openai.api_key))
 retriever = st.session_state.vectorstore.as_retriever(k=4)
 
 # Chat model setup
