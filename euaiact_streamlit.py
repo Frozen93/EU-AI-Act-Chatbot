@@ -27,7 +27,7 @@ st.title("Chatte per KI mit dem EU AI ACT")
 
 
 if "data" not in st.session_state:
-    st.session_state["data"] = PyPDFLoader("https://www.europarl.europa.eu/doceo/document/TA-9-2024-0138_EN.pdf").load()
+    st.session_state["data"] = PyPDFLoader("aiact.pdf").load()
 
 if "all_splits" not in st.session_state:
     st.session_state["all_splits"] = RecursiveCharacterTextSplitter(
