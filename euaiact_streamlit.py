@@ -39,7 +39,7 @@ question_answering_prompt = ChatPromptTemplate.from_messages(
     [
         (
             "system",
-            "Answer the user's questions based on the below context:\n\n{context}",
+            "Answer the user's questions in based on the below context:\n\n{context}. Use markdown to produce readable and well structured output.",
         ),
         MessagesPlaceholder(variable_name="messages"),
     ]
