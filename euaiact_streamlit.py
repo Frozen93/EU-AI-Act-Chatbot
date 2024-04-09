@@ -19,20 +19,17 @@ def convert_messages_to_expected_format(messages):
 
 openai.api_key = st.secrets["openai_key"]
 
-# Streamlit app title
+
 st.title("Chatte per KI mit dem EU AI ACT")
 
 if "data" not in st.session_state:
     st.session_state["data"] = PyPDFLoader("aiact.pdf").load()
-# Initialize document processing components
-
 
 if "all_splits" not in st.session_state:
     st.session_state["all_splits"] = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=0).split_documents(st.session_state.data)
 
 if "vectorstore" not in st.session_state:
     st.session_state["vectorstore"] = Chroma.from_documents(documents=st.session_state.all_splits, embedding=OpenAIEmbeddings(openai_api_key=openai.api_key))
-#vectorstore = Chroma.from_documents(documents=st.session_state.all_splits, embedding=OpenAIEmbeddings())
 retriever = st.session_state.vectorstore.as_retriever(k=4)
 
 # Chat model setup
