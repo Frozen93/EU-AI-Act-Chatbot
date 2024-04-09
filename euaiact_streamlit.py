@@ -10,12 +10,15 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.memory import ChatMessageHistory
 from langchain_core.runnables import RunnablePassthrough
 
+
 # Function to convert session state messages to the expected format
 def convert_messages_to_expected_format(messages):
     return [
         HumanMessage(content=message["content"], type="human")
-        for message in messages if message["role"] == "user"
+        for message in messages
+        if message["role"] == "user"
     ]
+
 
 openai.api_key = st.secrets["openai_key"]
 
@@ -27,10 +30,15 @@ if "data" not in st.session_state:
     st.session_state["data"] = PyPDFLoader("aiact.pdf").load()
 
 if "all_splits" not in st.session_state:
-    st.session_state["all_splits"] = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=0).split_documents(st.session_state.data)
+    st.session_state["all_splits"] = RecursiveCharacterTextSplitter(
+        chunk_size=500, chunk_overlap=0
+    ).split_documents(st.session_state.data)
 
 if "vectorstore" not in st.session_state:
-    st.session_state["vectorstore"] = FAISS.from_documents(documents=st.session_state.all_splits, embedding=OpenAIEmbeddings(openai_api_key=openai.api_key))
+    st.session_state["vectorstore"] = FAISS.from_documents(
+        documents=st.session_state.all_splits,
+        embedding=OpenAIEmbeddings(openai_api_key=openai.api_key),
+    )
 retriever = st.session_state.vectorstore.as_retriever(k=4)
 
 # Chat model setup
@@ -70,13 +78,13 @@ if user_input := st.chat_input("Deine Frage:"):
     # Convert session state messages to the format expected by ChatMessageHistory
     converted_messages = convert_messages_to_expected_format(st.session_state.messages)
     chat_history = ChatMessageHistory(messages=converted_messages)
-    
+
     # Invoke the document retrieval and response generation chain
     response = retrieval_chain.invoke({"messages": chat_history.messages})
-    
+
     # Add AI response to session state history
     st.session_state.messages.append({"role": "ai", "content": response["answer"]})
-    
+
     # Update the display with AI response
     with st.chat_message("ai"):
         st.markdown(response["answer"])
